@@ -1,5 +1,9 @@
 # SENTINEL
 
+> Sibling build, same day, same fail-closed doctrine, zero shared code:
+> **[CONCORD](https://github.com/GOATnote-Inc/concord)** — the same gates guarding the
+> against-medical-advice conversation in healthcare (Act 2 of the demo).
+
 **An event-triggered, self-correcting ops agent.** A live event stream flows in; with zero
 human intervention SENTINEL detects incidents, plans with Claude, acts through a policy-gated
 tool registry, **verifies by re-inspecting the actual state that fired the event**, and
