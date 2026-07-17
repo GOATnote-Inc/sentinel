@@ -27,8 +27,9 @@
 ##   SENTINEL_POMERIUM=live ./demo.sh
 ## Terminal B (CONCORD): cd ~/concord && set -a; source ~/attending/.env; \
 ##   source ~/loop/hackathon/starter-kit/.env; set +a; make demo-gov
-## CONCORD-on-Akash: image ready (ttl.sh/concord-bgoat-loop17:24h); blocked ONLY by the
-## $1-trial escrow ceiling — redeem a venue coupon (Hackathon → Redeem) and deploy in ~2 min.
+## CONCORD-on-Akash: LIVE (2:52 PM, post-coupon) — DSEQ 1784325010856,
+## http://pbt7v5jj7lf3vc269vlpojl4t4.ingress.cpu.aesservices.net (keyless: deterministic
+## extraction + local evidence, labeled honestly). Both agents on Akash = both Akash tabs.
 
 | Clock | Beat | Say / do |
 |---|---|---|
@@ -42,7 +43,7 @@
 | ~1:36 | **WOW 2: guardrail** | Pre-announce: "Next one it should NOT be allowed to fix." DBAlert on billing-db → ⛔ BLOCKED. "It planned a restart of a production database — the policy gate blocked it. [LIVE-UPGRADE: 'Pomerium blocked it.'] Autonomy WITH guardrails." |
 | ~1:45 | Honest escalation | NEEDS HUMAN badge. "When it can't safely fix something, it doesn't fail silently — it escalates to a human with the full evidence trail. That's our answer to 'what if it's wrong?'" |
 | 1:50–2:20 | **ACT 2: the stakes** | _[switch to TAB 3 — CONCORD]_ "Now raise the stakes. Hospitals hand out discharge instructions, but there's no real surface for shared decision-making — least of all the against-medical-advice conversation. Agents can automate this — and **agentic automation in healthcare kills people when it's wrong**. Same gates, hardest domain: this is CONCORD. Eleanor, 90, food impaction, wants to leave. Watch — the model just called waiting 'perfectly safe': the grounding gate **blocked it**, redline on the clinician side, **nothing** reaches the patient. _[press B]_ Bound to real evidence — ASGE guideline, cited both sides. The evidence it's allowed to cite arrives through **Nexla** — governed, credentialed — it's on screen. Artifacts stay locked until teach-back passes and a human attests capacity." |
-| 2:20–2:40 | **Tool roll-call (all true)** | "Three of your sponsors are load-bearing and live: **Pomerium**'s policy engine made that deny — a real 403 from a real proxy, the agent physically can't restart a prod database. **Nexla** delivers the only evidence the healthcare gate will trust. **Akash** — _[TAB 2, URL in the bar]_ — is running the agent and UI right now, deployed this afternoon. Plans were **live Claude**. Tool registry is Zero.xyz-shaped but ran local today — the labels never lie." |
+| 2:20–2:40 | **Tool roll-call (all true)** | "Three of your sponsors are load-bearing and live: **Pomerium**'s policy engine made that deny — a real 403 from a real proxy, the agent physically can't restart a prod database. **Nexla** delivers the only evidence the healthcare gate will trust. **Akash** — _[TAB 2, URL in the bar]_ — is running **BOTH agents right now**: SENTINEL and CONCORD, two separate deployments, live at these URLs. Plans were **live Claude**. Tool registry is Zero.xyz-shaped but ran local today — the labels never lie." |
 | 2:40–2:50 | **The number** | "Measured, three consecutive runs: detect → verified fix **under 10 seconds**, full golden path **67 seconds**, hands off." |
 | 2:50–3:00 | Close | "Thirty stolen minutes → ten hands-off seconds — and the same gates that fix your disk tonight are the ones that keep an autonomous agent from hurting Eleanor. Autonomy you can hand the most dangerous queue in the building. That's the company." |
 
