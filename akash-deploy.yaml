@@ -1,0 +1,33 @@
+# Akash SDL for SENTINEL (agent + UI container; model = Anthropic API).
+# STATUS: prepared, NOT yet deployed — do not claim Akash on stage until this is
+# live and the public URL is in the browser bar. See DEMO.md preflight.
+---
+version: "2.0"
+services:
+  sentinel:
+    image: REPLACE_WITH_PUSHED_IMAGE   # e.g. ghcr.io/<user>/sentinel:demo
+    env:
+      - ANTHROPIC_API_KEY=REPLACE_AT_DEPLOY
+    expose:
+      - port: 8787
+        as: 80
+        to:
+          - global: true
+profiles:
+  compute:
+    sentinel:
+      resources:
+        cpu: { units: 1.0 }
+        memory: { size: 1Gi }
+        storage: { size: 1Gi }
+  placement:
+    dcloud:
+      pricing:
+        sentinel:
+          denom: uakt
+          amount: 10000
+deployment:
+  sentinel:
+    dcloud:
+      profile: sentinel
+      count: 1

@@ -1,0 +1,4 @@
+# Minimal deps. The engine runs offline with a mock; only `--live` needs the SDK.
+anthropic>=0.40.0
+fastapi>=0.110
+uvicorn>=0.29
