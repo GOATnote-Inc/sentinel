@@ -19,8 +19,16 @@
 > Stage setup: TAB 1 localhost SENTINEL · TAB 2 Akash URL · TAB 3 CONCORD (make demo-gov,
 > advanced to the blocked-claim beat).
 
-## Setup (before slot): terminal in `hackathon/starter-kit`, browser at `localhost:8787`,
-## backup video open in the next tab. Command ready: `SENTINEL_ENV_FILE=<env> ./demo.sh`
+## Setup (before slot):
+## TAB 1: localhost:8787 · TAB 2: the Akash URL · TAB 3: localhost:8901 (CONCORD at the
+## blocked-claim beat: SPACE ×3 after boot) · backup video in TAB 4.
+## Terminal A (SENTINEL): docker start pomerium 2>/dev/null;
+##   cd ~/loop/hackathon/starter-kit && SENTINEL_ENV_FILE=~/attending/.env \
+##   SENTINEL_POMERIUM=live ./demo.sh
+## Terminal B (CONCORD): cd ~/concord && set -a; source ~/attending/.env; \
+##   source ~/loop/hackathon/starter-kit/.env; set +a; make demo-gov
+## CONCORD-on-Akash: image ready (ttl.sh/concord-bgoat-loop17:24h); blocked ONLY by the
+## $1-trial escrow ceiling — redeem a venue coupon (Hackathon → Redeem) and deploy in ~2 min.
 
 | Clock | Beat | Say / do |
 |---|---|---|
