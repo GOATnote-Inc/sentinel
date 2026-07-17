@@ -172,6 +172,22 @@ async def inject(itype: str):
     return {"injected": ev["id"], "type": itype}
 
 
+@app.post("/toolexec/{tool}/{service}")
+async def toolexec(tool: str, service: str):
+    """Upstream tool endpoint that Pomerium fronts in live mode. Defense in depth:
+    the in-process gate ALSO runs here, so a direct hit can't bypass policy —
+    Pomerium is the outer enforcement layer, this is the inner one."""
+    from . import policy as _policy
+    if service not in world.services or tool not in _policy.ALLOWED_TOOLS:
+        return JSONResponse({"error": "unknown tool/service"}, 404)
+    v = _policy.gate(tool, service, world.get(service).get("class", "app"))
+    if not v.allowed:
+        return JSONResponse({"ok": False, "blocked": True, "rule": v.rule}, 403)
+    from .registry import _LOCAL
+    detail = _LOCAL[tool](world, service)
+    return {"ok": True, "detail": detail}
+
+
 @app.get("/state")
 async def state():
     return {"world": {s: world.get(s) for s in world.services}, "status": status_payload()}

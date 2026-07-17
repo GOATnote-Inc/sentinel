@@ -20,7 +20,7 @@ import sys
 import time
 import urllib.request
 
-PORT = 8788
+PORT = int(os.environ.get("REHEARSE_PORT", "8788"))
 BASE = f"http://127.0.0.1:{PORT}"
 BUDGET_S = 90.0
 

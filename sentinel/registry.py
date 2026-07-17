@@ -6,7 +6,10 @@ Every call is policy-gated (see policy.py) and returns an honest `via` label.
 """
 from __future__ import annotations
 
+import json
 import time
+import urllib.error
+import urllib.request
 from dataclasses import dataclass, field
 
 from . import config, policy
@@ -90,6 +93,11 @@ class Registry:
         self.via = "Zero.xyz" if config.ZERO == "live" else "local tools (fallback)"
 
     def call(self, tool: str, service: str) -> ToolResult:
+        if config.POMERIUM == "live":
+            res = self._call_via_pomerium(tool, service)
+            if res is not None:
+                return res
+            # proxy unreachable: degrade to the local gate with honest local labels
         svc_class = self.world.get(service).get("class", "app")
         v = policy.gate(tool, service, svc_class)
         if not v.allowed:
@@ -104,3 +112,27 @@ class Registry:
         detail = fn(self.world, service)
         return ToolResult(tool, service, ok=True, blocked=False, detail=detail,
                           via=self.via, policy_via=v.via, rule=v.rule)
+
+    def _call_via_pomerium(self, tool: str, service: str) -> ToolResult | None:
+        """Route the tool call through the Pomerium proxy: ITS route policy (PPL)
+        decides. 403 -> BLOCKED by Pomerium; 200 -> executed; proxy down -> None
+        (caller falls back to the in-process gate, labels stay honest)."""
+        url = f"{config.POMERIUM_PROXY}/toolexec/{tool}/{service}"
+        req = urllib.request.Request(url, data=b"{}", method="POST",
+                                     headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=4) as r:
+                body = json.loads(r.read() or b"{}")
+                return ToolResult(tool, service, ok=bool(body.get("ok")),
+                                  blocked=False, detail=body.get("detail", ""),
+                                  via=self.via, policy_via="Pomerium",
+                                  rule="allowed by Pomerium route policy")
+        except urllib.error.HTTPError as e:
+            if e.code == 403:
+                return ToolResult(tool, service, ok=False, blocked=True,
+                                  detail="BLOCKED: denied by Pomerium route policy (PPL)",
+                                  via=self.via, policy_via="Pomerium",
+                                  rule="denied by Pomerium route policy (PPL)")
+            return None
+        except Exception:
+            return None

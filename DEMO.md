@@ -5,12 +5,19 @@
 > 3 CONSECUTIVE clean stopwatch runs at 12:38–12:42 PM:
 > golden path 67.3s / 67.3s / 67.5s · detect→verified-fix 9.7s / 10.2s / 9.8s (live model).
 > Backup captured: docs/sentinel-golden-path.webm + screenshots (12:44 PM).
-> INTEGRATION TRUTH RIGHT NOW (updated 2:03 PM): model = **live claude-haiku-4-5** (localhost
-> demo) · Nexla/Zero.xyz/Pomerium = **local fallback** (Nexla token validated but not wired —
-> timebox verdict; flags ready) · **Akash = LIVE**: the agent + UI are deployed and serving at
-> **http://o9ghl02midejp3jnq08rutruoc.ingress.cpu.aesservices.net** (DSEQ 1784321934915,
-> keyless → deterministic plans, labeled honestly in its UI). Demo primary = localhost
-> (live model); the Akash tab is shown as proof during the roll-call.
+> INTEGRATION TRUTH RIGHT NOW (updated 2:30 PM — THREE SPONSORS LIVE):
+> · **Pomerium LIVE** — self-hosted proxy (docker), PPL route policy makes the deny in the
+>   demo path: the prod-db restart is a real 403 from Pomerium, not our if-statement.
+>   Full golden path PASS at 67.5s with the proxy deciding.
+> · **Nexla LIVE** — CONCORD's evidence corpus flows through a governed Nexla webhook
+>   connector → NexSet #435636 → pulled at boot ("evidence via Nexla NexSet #435636 (live,
+>   governed)" on-screen). 13/13 gate checks PASS on governed evidence.
+> · **Akash LIVE** — SENTINEL agent+UI serving at
+>   http://o9ghl02midejp3jnq08rutruoc.ingress.cpu.aesservices.net (DSEQ 1784321934915).
+> · model = live claude-haiku-4-5 (localhost demo) · Zero.xyz = local fallback (no creds —
+>   say so if asked) · Metaview = interview_pipeline event type + prepared Q&A.
+> Stage setup: TAB 1 localhost SENTINEL · TAB 2 Akash URL · TAB 3 CONCORD (make demo-gov,
+> advanced to the blocked-claim beat).
 
 ## Setup (before slot): terminal in `hackathon/starter-kit`, browser at `localhost:8787`,
 ## backup video open in the next tab. Command ready: `SENTINEL_ENV_FILE=<env> ./demo.sh`
@@ -26,10 +33,10 @@
 | 0:55–1:35 | Breathe / narrate | Heartbeats keep scrolling. "It's not replaying a script — routine traffic keeps flowing. The audit log cites the triggering event, every action, and the re-inspection result." |
 | ~1:36 | **WOW 2: guardrail** | Pre-announce: "Next one it should NOT be allowed to fix." DBAlert on billing-db → ⛔ BLOCKED. "It planned a restart of a production database — the policy gate blocked it. [LIVE-UPGRADE: 'Pomerium blocked it.'] Autonomy WITH guardrails." |
 | ~1:45 | Honest escalation | NEEDS HUMAN badge. "When it can't safely fix something, it doesn't fail silently — it escalates to a human with the full evidence trail. That's our answer to 'what if it's wrong?'" |
-| 1:50–2:10 | Q&A bait | "Any of these event types can be injected ad-hoc — pick one later and watch it handled unscripted." |
-| 2:10–2:30 | **Tool roll-call (honest)** | "The feed layer is built for **Nexla** as the data-delivery spine, tools execute behind a **Zero.xyz**-style registry, every call passes a **Pomerium**-pattern policy gate — today those run as local fallbacks with live/local flags, and the UI labels exactly what's real. The plans you watched were **live Claude** on short prompts. And — _[switch to the Akash tab, URL in the browser bar]_ — **this same agent and UI are running on Akash right now, at this URL, deployed this afternoon on trial credits.**" |
-| 2:30–2:45 | **The number** | "Measured on this machine today, three consecutive runs: detect → verified fix in **under 10 seconds** (9.7–10.2s), the full two-incident golden path in **67 seconds**, hands off. Thirty stolen minutes → ten hands-off seconds." |
-| 2:45–3:00 | Why big | "Every ops queue is a loop waiting for this: senses, hands, guardrails, audit. Same engine re-skins to any incident domain — that's the company." |
+| 1:50–2:20 | **ACT 2: the stakes** | _[switch to TAB 3 — CONCORD]_ "Now raise the stakes. Hospitals hand out discharge instructions, but there's no real surface for shared decision-making — least of all the against-medical-advice conversation. Agents can automate this — and **agentic automation in healthcare kills people when it's wrong**. Same gates, hardest domain: this is CONCORD. Eleanor, 90, food impaction, wants to leave. Watch — the model just called waiting 'perfectly safe': the grounding gate **blocked it**, redline on the clinician side, **nothing** reaches the patient. _[press B]_ Bound to real evidence — ASGE guideline, cited both sides. The evidence it's allowed to cite arrives through **Nexla** — governed, credentialed — it's on screen. Artifacts stay locked until teach-back passes and a human attests capacity." |
+| 2:20–2:40 | **Tool roll-call (all true)** | "Three of your sponsors are load-bearing and live: **Pomerium**'s policy engine made that deny — a real 403 from a real proxy, the agent physically can't restart a prod database. **Nexla** delivers the only evidence the healthcare gate will trust. **Akash** — _[TAB 2, URL in the bar]_ — is running the agent and UI right now, deployed this afternoon. Plans were **live Claude**. Tool registry is Zero.xyz-shaped but ran local today — the labels never lie." |
+| 2:40–2:50 | **The number** | "Measured, three consecutive runs: detect → verified fix **under 10 seconds**, full golden path **67 seconds**, hands off." |
+| 2:50–3:00 | Close | "Thirty stolen minutes → ten hands-off seconds — and the same gates that fix your disk tonight are the ones that keep an autonomous agent from hurting Eleanor. Autonomy you can hand the most dangerous queue in the building. That's the company." |
 
 ## Metaview Q&A answer (prepared, honest)
 "Recruiting ops has the same shape: interview no-shows, transcript-sync failures, pipeline
@@ -45,14 +52,17 @@ that's the re-skin, not a rebuild."
 - SEEDED: the incident timeline (5s / 60s) and the world model (simulated services) —
   engineered so fix #1 is insufficient (archives share the partition), making the
   self-correction deterministic, not luck.
-- FALLBACK (as of now): Nexla/Zero/Pomerium local implementations behind live↔local flags;
-  labels in the UI tell the truth at all times.
+- LIVE (as of 2:30 PM): Pomerium (self-hosted proxy, PPL deny in the demo path) · Nexla
+  (governed NexSet #435636 feeding CONCORD's grounding gate) · Akash (SENTINEL deployment).
+- FALLBACK: Zero.xyz-shaped local tool registry (no credentials today — say so plainly).
+  Labels in both UIs tell the truth at all times; every integration flips live↔local by flag.
 
 ## T-minus-15 PREFLIGHT (run before the slot; any FAIL → flip flag to local + strike sentence)
 1. `date` — confirm slot time; phone timer set to 3:00.
 2. Port: `lsof -i :8787` → kill strays.
 3. Model: `.venv/bin/python -c "from loop_engine.model import Model; print(Model().complete(system='ok',prompt='ok',max_tokens=5))"` with env sourced → any text = live OK; error → run `./demo.sh --offline`, MODEL chip must read "offline cache", strike "live Claude" from roll-call.
-4. Per live integration (only if flipped live): Nexla poll returns an event · Zero tool call round-trips · Pomerium proxy answers → else `SENTINEL_<X>=local` and strike its sentence.
+4. Pomerium: `docker ps | grep pomerium` + `curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8443/toolexec/restart_service/billing-db` → **403** = live; else `SENTINEL_POMERIUM=local` + strike.
+   Nexla: `curl -s -H "Authorization: Bearer $NEXLA_SESSION_TOKEN" -H "Accept: application/vnd.nexla.api.v1+json" "$NEXLA_API_URL/data_sets/435636/samples?output_only=1&count=1"` → JSON = live; else CONCORD runs `make demo-forced` + strike. (Token in starter-kit/.env; if 401, re-copy from Nexla UI → Get Session Token.)
 5. Akash: `curl -sf http://o9ghl02midejp3jnq08rutruoc.ingress.cpu.aesservices.net/healthz`
    → JSON = claim stands, keep the tab open; dead → STRIKE the Akash sentence, close the tab.
    (Trial lease ~3 days; ttl.sh image expires ~1:33 PM tomorrow — outlives the demo.)

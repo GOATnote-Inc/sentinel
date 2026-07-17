@@ -24,6 +24,10 @@ MODEL_TIMEOUT_S = float(os.environ.get("SENTINEL_MODEL_TIMEOUT", "10"))
 
 PORT = int(os.environ.get("SENTINEL_PORT", "8787"))
 
+# Pomerium live mode: registry calls route through this proxy; its PPL policy makes
+# the allow/deny decision OUTSIDE the process (403 => BLOCKED verdict via Pomerium).
+POMERIUM_PROXY = os.environ.get("SENTINEL_POMERIUM_PROXY", "http://localhost:8443")
+
 # Seconds between glass-box steps so the loop is readable from the back of the room.
 # Elapsed-time instrumentation includes this — the closing number stays honest.
 STEP_PACE_S = float(os.environ.get("SENTINEL_STEP_PACE", "0.8"))

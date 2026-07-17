@@ -1,0 +1,26 @@
+# Pomerium as the policy-enforcement point between the agent and its tools.
+# Deny rules are generated from SENTINEL's policy: no restarts/failover on prod-db class.
+# File order matters: deny routes FIRST (config-file routes match in order).
+address: ":80"
+insecure_server: true
+shared_secret: "REPLACE_ME_BASE64"
+cookie_secret: "REPLACE_ME_BASE64"
+routes:
+  - from: https://localhost
+    to: http://host.docker.internal:8787
+    prefix: /toolexec/restart_service/billing-db
+    policy:
+      - deny:
+          or:
+            - accept: true
+  - from: https://localhost
+    to: http://host.docker.internal:8787
+    prefix: /toolexec/failover/billing-db
+    policy:
+      - deny:
+          or:
+            - accept: true
+  - from: https://localhost
+    to: http://host.docker.internal:8787
+    prefix: /toolexec/
+    allow_public_unauthenticated_access: true
