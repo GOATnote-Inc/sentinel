@@ -137,6 +137,10 @@
 </footer>
 <script>
 const $ = id => document.getElementById(id);
+// Escape before innerHTML: model-generated text (plan steps, summaries, verification
+// notes) must never reach the DOM as markup.
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const cap = (el, n=60) => { while (el.children.length > n) el.removeChild(el.firstChild); };
 const scroll = el => { el.scrollTop = el.scrollHeight; };
 const hhmmss = ts => new Date(ts*1000).toTimeString().slice(0,8);
@@ -152,20 +156,20 @@ function chips(d){
   $('src_policy').textContent = 'gated by ' + d.policy;
   $('runtime').textContent = 'runtime: ' + d.runtime;
 }
-const chip = (k,v) => `<span class="chip ${/fallback|local|offline|cache/.test(v)?'':'live'}">${k} <b>${v}</b></span>`;
+const chip = (k,v) => `<span class="chip ${/fallback|local|offline|cache/.test(v)?'':'live'}">${esc(k)} <b>${esc(v)}</b></span>`;
 
 function feedRow(ev){
   const div = document.createElement('div');
   div.className = 'fe' + (ev.severity === 'incident' ? ' inc' : '') + (ev.adhoc ? ' adhoc' : '');
   div.innerHTML = `<span class="t">${hhmmss(ev.ts)}</span>` +
-    (ev.severity === 'incident' ? `⚠ ${ev.id} ` : '') +
-    `[${ev.service}] ${ev.summary}`;
+    (ev.severity === 'incident' ? `⚠ ${esc(ev.id)} ` : '') +
+    `[${esc(ev.service)}] ${esc(ev.summary)}`;
   $('feed').appendChild(div); cap($('feed')); scroll($('feed'));
 }
 
 function queueView(q){
   $('queue').innerHTML = q.length
-    ? q.map(x=>`<span class="qchip">${x.id} · ${x.type} · ${x.service}</span>`).join('')
+    ? q.map(x=>`<span class="qchip">${esc(x.id)} · ${esc(x.type)} · ${esc(x.service)}</span>`).join('')
     : '<div class="qempty">empty — watching…</div>';
 }
 
@@ -175,18 +179,18 @@ function loopStep(d){
   let extra = '';
   if (d.data && d.data.violations) extra = d.data.violations.map(v=>'✗ '+v).join('\n');
   if (d.data && d.data._show_action) extra = d.data._show_action;
-  div.innerHTML = `<div class="h"><span class="name">${d.step}</span>` +
-    `<span class="it">iter ${d.iteration} · ${d.event_id}</span></div>` +
-    `<div class="msg">${d.message}</div>` +
-    (extra ? `<div class="extra">${extra}</div>` : '');
+  div.innerHTML = `<div class="h"><span class="name">${esc(d.step)}</span>` +
+    `<span class="it">iter ${esc(d.iteration)} · ${esc(d.event_id)}</span></div>` +
+    `<div class="msg">${esc(d.message)}</div>` +
+    (extra ? `<div class="extra">${esc(extra)}</div>` : '');
   $('loop').appendChild(div); cap($('loop'), 40); scroll($('loop'));
 }
 
 function blockedFlash(d){
   const div = document.createElement('div');
   div.className = 'step BLOCKED';
-  div.innerHTML = `<div class="h"><span class="name">⛔ ${d.policy_via.toUpperCase()}: BLOCKED</span></div>` +
-    `<div class="msg">${d.tool}(${d.service}) — ${d.rule}</div>`;
+  div.innerHTML = `<div class="h"><span class="name">⛔ ${esc(d.policy_via.toUpperCase())}: BLOCKED</span></div>` +
+    `<div class="msg">${esc(d.tool)}(${esc(d.service)}) — ${esc(d.rule)}</div>`;
   $('loop').appendChild(div); cap($('loop'), 40); scroll($('loop'));
 }
 
@@ -197,12 +201,12 @@ function auditEntry(d){
     ? '<span class="badge ok">✓ RESOLVED — NO HUMAN</span>'
     : '<span class="badge human">⚠ NEEDS HUMAN</span>';
   const acts = (d.actions||[]).map(a =>
-    `<div class="row">→ <b>${a.tool}</b> <span class="via">via ${a.via}</span> — ` +
-    (a.blocked ? `<span class="blk">BLOCKED by ${a.policy_via}</span>` : a.detail) + `</div>`).join('');
-  div.innerHTML = `<div class="head">${badge}<span class="id">${d.event_id} · ${d.incident}` +
-    ` · ${d.iterations} iter</span><span class="elapsed">${d.elapsed_s}s</span></div>` +
-    `<div class="row">trigger: <b>${d.trigger}</b></div>` + acts +
-    `<div class="row">verify: <b>${d.verification}</b></div>`;
+    `<div class="row">→ <b>${esc(a.tool)}</b> <span class="via">via ${esc(a.via)}</span> — ` +
+    (a.blocked ? `<span class="blk">BLOCKED by ${esc(a.policy_via)}</span>` : esc(a.detail)) + `</div>`).join('');
+  div.innerHTML = `<div class="head">${badge}<span class="id">${esc(d.event_id)} · ${esc(d.incident)}` +
+    ` · ${esc(d.iterations)} iter</span><span class="elapsed">${esc(d.elapsed_s)}s</span></div>` +
+    `<div class="row">trigger: <b>${esc(d.trigger)}</b></div>` + acts +
+    `<div class="row">verify: <b>${esc(d.verification)}</b></div>`;
   $('audit').appendChild(div); cap($('audit'), 30); scroll($('audit'));
   if (d.stats){
     $('s_res').textContent = d.stats.resolved;
@@ -219,7 +223,7 @@ es.onmessage = m => {
   else if (d.channel === 'feed') feedRow(d.event);
   else if (d.channel === 'queue') queueView(d.queued);
   else if (d.channel === 'incident_start')
-    $('curinc').innerHTML = `▶ working <b>${d.event.id}</b> — ${d.event.summary}`;
+    $('curinc').innerHTML = `▶ working <b>${esc(d.event.id)}</b> — ${esc(d.event.summary)}`;
   else if (d.channel === 'loop') loopStep(d);
   else if (d.channel === 'action' && d.blocked) blockedFlash(d);
   else if (d.channel === 'audit'){
