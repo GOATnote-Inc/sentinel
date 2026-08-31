@@ -1,5 +1,9 @@
 # SENTINEL
 
+> **Hackathon build (2026-07-17), frozen, not maintained.**
+> Published from the GOATnote hackathon starter kit; the maintained development history
+> lives in a private repo.
+
 **An event-triggered, self-correcting ops agent.** A live event stream flows in; with zero
 human intervention SENTINEL detects incidents, plans with Claude, acts through a policy-gated
 tool registry, **verifies by re-inspecting the actual state that fired the event**, and
@@ -84,3 +88,11 @@ curl -s -X POST localhost:8787/mcp -H 'Content-Type: application/json' -d \
 Prints every beat with timestamps and PASSes only if: the seeded incident resolves in
 exactly 2 iterations, the out-of-policy action is blocked then escalated, heartbeats keep
 flowing after the story, and the whole path lands under 90s.
+
+A screen recording of the golden path lives in the
+[demo-assets release](https://github.com/GOATnote-Inc/sentinel/releases/tag/demo-assets)
+(kept out of the git tree to keep clones small).
+
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE).

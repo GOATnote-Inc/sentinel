@@ -1,6 +1,6 @@
 """SENTINEL server: feed -> serial incident queue -> loop_engine -> SSE glass box.
 
-Run from hackathon/starter-kit:   .venv/bin/python -m sentinel.app
+Run from the repo root:   .venv/bin/python -m sentinel.app
 Autonomy: the feed starts by itself a few seconds after boot — there is NO run button.
 """
 from __future__ import annotations

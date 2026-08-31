@@ -4,13 +4,13 @@
 > bugfixes + credential-gated flag flips allowed now). Numbers are MEASURED from the
 > 3 CONSECUTIVE clean stopwatch runs at 12:38–12:42 PM:
 > golden path 67.3s / 67.3s / 67.5s · detect→verified-fix 9.7s / 10.2s / 9.8s (live model).
-> Backup captured: docs/sentinel-golden-path.webm + screenshots (12:44 PM).
+> Backup captured: golden-path recording (now a GitHub Release asset: demo-assets) + screenshots (12:44 PM).
 > INTEGRATION TRUTH RIGHT NOW (updated 2:30 PM — THREE SPONSORS LIVE):
 > · **Pomerium LIVE** — self-hosted proxy (docker), PPL route policy makes the deny in the
 >   demo path: the prod-db restart is a real 403 from Pomerium, not our if-statement.
 >   Full golden path PASS at 67.5s with the proxy deciding.
 > · **Nexla LIVE** — CONCORD's evidence corpus flows through a governed Nexla webhook
->   connector → NexSet #435636 → pulled at boot ("evidence via Nexla NexSet #435636 (live,
+>   connector → a governed NexSet → pulled at boot ("evidence via Nexla NexSet (live,
 >   governed)" on-screen). 13/13 gate checks PASS on governed evidence.
 > · **Akash LIVE** — SENTINEL agent+UI serving at
 >   http://o9ghl02midejp3jnq08rutruoc.ingress.cpu.aesservices.net (DSEQ 1784321934915).
@@ -18,18 +18,6 @@
 >   say so if asked) · Metaview = interview_pipeline event type + prepared Q&A.
 > Stage setup: TAB 1 localhost SENTINEL · TAB 2 Akash URL · TAB 3 CONCORD (make demo-gov,
 > advanced to the blocked-claim beat).
-
-## Setup (before slot):
-## TAB 1: localhost:8787 · TAB 2: the Akash URL · TAB 3: localhost:8901 (CONCORD at the
-## blocked-claim beat: SPACE ×3 after boot) · backup video in TAB 4.
-## Terminal A (SENTINEL): docker start pomerium 2>/dev/null;
-##   cd ~/loop/hackathon/starter-kit && SENTINEL_ENV_FILE=~/attending/.env \
-##   SENTINEL_POMERIUM=live ./demo.sh
-## Terminal B (CONCORD): cd ~/concord && set -a; source ~/attending/.env; \
-##   source ~/loop/hackathon/starter-kit/.env; set +a; make demo-gov
-## CONCORD-on-Akash: LIVE (2:52 PM, post-coupon) — DSEQ 1784325010856,
-## http://pbt7v5jj7lf3vc269vlpojl4t4.ingress.cpu.aesservices.net (keyless: deterministic
-## extraction + local evidence, labeled honestly). Both agents on Akash = both Akash tabs.
 
 | Clock | Beat | Say / do |
 |---|---|---|
@@ -62,18 +50,6 @@ that's the re-skin, not a rebuild."
   engineered so fix #1 is insufficient (archives share the partition), making the
   self-correction deterministic, not luck.
 - LIVE (as of 2:30 PM): Pomerium (self-hosted proxy, PPL deny in the demo path) · Nexla
-  (governed NexSet #435636 feeding CONCORD's grounding gate) · Akash (SENTINEL deployment).
+  (a governed NexSet feeding CONCORD's grounding gate) · Akash (SENTINEL deployment).
 - FALLBACK: Zero.xyz-shaped local tool registry (no credentials today — say so plainly).
   Labels in both UIs tell the truth at all times; every integration flips live↔local by flag.
-
-## T-minus-15 PREFLIGHT (run before the slot; any FAIL → flip flag to local + strike sentence)
-1. `date` — confirm slot time; phone timer set to 3:00.
-2. Port: `lsof -i :8787` → kill strays.
-3. Model: `.venv/bin/python -c "from loop_engine.model import Model; print(Model().complete(system='ok',prompt='ok',max_tokens=5))"` with env sourced → any text = live OK; error → run `./demo.sh --offline`, MODEL chip must read "offline cache", strike "live Claude" from roll-call.
-4. Pomerium: `docker ps | grep pomerium` + `curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8443/toolexec/restart_service/billing-db` → **403** = live; else `SENTINEL_POMERIUM=local` + strike.
-   Nexla: `curl -s -H "Authorization: Bearer $NEXLA_SESSION_TOKEN" -H "Accept: application/vnd.nexla.api.v1+json" "$NEXLA_API_URL/data_sets/435636/samples?output_only=1&count=1"` → JSON = live; else CONCORD runs `make demo-forced` + strike. (Token in starter-kit/.env; if 401, re-copy from Nexla UI → Get Session Token.)
-5. Akash: `curl -sf http://o9ghl02midejp3jnq08rutruoc.ingress.cpu.aesservices.net/healthz`
-   → JSON = claim stands, keep the tab open; dead → STRIKE the Akash sentence, close the tab.
-   (Trial lease ~3 days; ttl.sh image expires ~1:33 PM tomorrow — outlives the demo.)
-6. Backup video open in adjacent tab; `--offline` rehearsed once this hour.
-7. Browser: full-screen, ~125% zoom, dark room check.
